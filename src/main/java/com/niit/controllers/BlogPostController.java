@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.niit.Dao.BlogPostDao;
+import com.niit.model.BlogComment;
 import com.niit.model.BlogPost;
 import com.niit.model.Error;
-import com.niit.model.Job;
 import com.niit.model.Users;
 
 @RestController	
@@ -88,4 +88,47 @@ public class BlogPostController {
 				blogPostDao.updateBlogPost(blogPost);
 				return new ResponseEntity<BlogPost>(blogPost,HttpStatus.OK);
 			}
+			
+			
+			@RequestMapping(value="/addblogcomment", method=RequestMethod.POST)
+			public ResponseEntity<?> addBlogComment(@RequestBody BlogComment blogComment, HttpSession session){
+				Users users=(Users)session.getAttribute("user");
+				System.out.println(users);
+				if(users==null){
+					Error error=new Error(3,"UnAuthorized user");
+					return new ResponseEntity<Error>(error,HttpStatus.UNAUTHORIZED);
+				}
+				try{
+					blogComment.setCommentedBy(users);
+					blogComment.setCommentedOn(new Date());
+				blogPostDao.addComment(blogComment);
+				return new ResponseEntity<Void>(HttpStatus.OK);
+				}catch(Exception e){
+					Error error=new Error(4,"Unable to add comment" + e.getMessage());
+					return new ResponseEntity<Error>(error,HttpStatus.INTERNAL_SERVER_ERROR);
+					
+				}
+			}
+			
+			@RequestMapping(value="/getblogcomments/{blogid}", method=RequestMethod.GET)
+			public ResponseEntity<?> getBlogComments(@PathVariable int blogId,HttpSession session){
+				System.out.println("Entering BlogComments");
+				Users users=(Users)session.getAttribute("user");
+				System.out.println(users);
+				if(users==null){
+					Error error=new Error(3,"UnAuthorized user");
+					return new ResponseEntity<Error>(error,HttpStatus.UNAUTHORIZED);
+				}
+				try{
+				List<BlogComment> blogComments=blogPostDao.getBlogComments(blogId);
+				System.out.println(blogComments.size());
+				return new ResponseEntity<List<BlogComment>>(blogComments,HttpStatus.OK);
+		
+				}catch(Exception e){
+					System.out.println(e.getMessage());
+					return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+			}
+	
+			
 }
