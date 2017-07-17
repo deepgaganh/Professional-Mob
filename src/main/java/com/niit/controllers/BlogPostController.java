@@ -110,7 +110,7 @@ public class BlogPostController {
 				}
 			}
 			
-			@RequestMapping(value="/getblogcomments/{blogid}", method=RequestMethod.GET)
+			@RequestMapping(value="/getblogcomments/{blogId}", method=RequestMethod.GET)
 			public ResponseEntity<?> getBlogComments(@PathVariable int blogId,HttpSession session){
 				System.out.println("Entering BlogComments");
 				Users users=(Users)session.getAttribute("user");

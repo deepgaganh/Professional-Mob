@@ -31,7 +31,7 @@ public class JobController {
 		if(users==null){
 			Error error=new Error(3,"UnAuthorized user");
 			return new ResponseEntity<Error>(error,HttpStatus.UNAUTHORIZED);
-		}		
+		}
 		try{
 			if(users.getRole().equals("Admin")){
 				job.setPostedOn(new Date());
