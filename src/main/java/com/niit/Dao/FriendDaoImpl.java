@@ -2,6 +2,7 @@ package com.niit.Dao;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -37,6 +38,38 @@ public class FriendDaoImpl implements FriendDao{
 		session.close();
 		
 	}
+	public List<Friend> listOfPendingRequests(String loggedInUsername) {
+		Session session=sessionFactory.openSession();
+		Query query=session.createQuery("from Friend where toId=? and status=?");
+		query.setString(0, loggedInUsername);
+		query.setCharacter(1, 'P');
+		List<Friend> pendingRequests= query.list();
+		session.close();
+		return pendingRequests;
+	}
+	
+	public void updatePendingRequest(String fromId, String toId, char status) {
+		Session session=sessionFactory.openSession();
+		Query query=session.createQuery("from Friend where fromId=? and toId=?");
+		query.setString(0, fromId);
+		query.setString(1, toId);
+		Friend friend=(Friend)query.uniqueResult();
+		friend.setStatus(status); //status can be eithe 'A' or 'D'
+		session.update(friend);
+		session.flush();
+		session.close();
+	}
+	public List<Friend> listOfFriends(String username) {
+		Session session=sessionFactory.openSession();
+		Query query=session.createQuery("from Friend where (fromId=? or toId=?) and status=?");
+		query.setString(0, username);
+		query.setString(1, username);
+		query.setCharacter(2, 'A');
+		List<Friend> friends= query.list();
+		session.close();
+		return friends;
+	}
+	
 	
 	
 
