@@ -96,4 +96,27 @@ public class UsersController {
 		
 	}
 	
+	@RequestMapping(value="/getuserdetails", method=RequestMethod.GET)
+	public ResponseEntity<?> getUserDetails(HttpSession session){
+		Users users=(Users)session.getAttribute("user");
+		//	System.out.println("Is session new for" + users.getUsername() + session.isNew());
+			if(users==null)
+			{
+				Error error=new Error(3,"Unauthorized user");
+				return new ResponseEntity<Error>(error,HttpStatus.UNAUTHORIZED);
+			}
+			users=usersDao.getUserByUsername(users.getUsername());
+			return new ResponseEntity<Users>(users,HttpStatus.OK);
+	}
+	@RequestMapping(value="/updateprofile", method=RequestMethod.PUT)
+	public ResponseEntity<?> updateUserProfile(@RequestBody Users user,HttpSession session){
+		Users users=(Users)session.getAttribute("user");
+			if(users==null)
+			{
+				Error error=new Error(3,"Unauthorized user");
+				return new ResponseEntity<Error>(error,HttpStatus.UNAUTHORIZED);
+			}
+			usersDao.updateUser(user);
+			return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 }
