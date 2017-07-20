@@ -27,7 +27,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 		.addResourceLocations("/WEB-INF/resources/");
 	}
 	
-	@Bean
+	@Bean(name="multipartResolver")
 	public CommonsMultipartResolver getCommonsMultipartResolver(){
 		CommonsMultipartResolver multipartResolver= new CommonsMultipartResolver();
 		multipartResolver.setMaxUploadSize(20971520); // 20MB
